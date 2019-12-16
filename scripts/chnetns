@@ -1,5 +1,7 @@
 #!/bin/sh
 
+PATH="/usr/bin:/bin:/usr/sbin:/sbin"
+
 display_usage() {
 	echo "Run program in a specific named network namespace, very like to chroot."
 	echo -e "\nUsage:\n\t$0 netns command [arguments] \n"
@@ -17,6 +19,6 @@ case "$1" in
 		exit 0
 		;;
 	*)
-	exec /bin/ip netns exec "$@"
+	exec ip netns exec "$@"
 	;;
 esac

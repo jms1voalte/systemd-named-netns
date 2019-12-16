@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH="/usr/bin:/bin:/usr/sbin:/sbin"
+
 set -e
 
 display_usage() {
@@ -10,17 +12,17 @@ display_usage() {
 
 autoconfigure_tunnel() {
 	if [ ! -z "$MACADDR" ]; then
-		/bin/ip link set ${DEVNAME_INSIDE} address ${MACADDR}
+		ip link set ${DEVNAME_INSIDE} address ${MACADDR}
 	fi
 	if [ "${DHCPV4}" == "1" ]; then
 		! mkdir -p /var/run/netns
 		dhclient -v -i ${DEVNAME_INSIDE} -nw -pf /var/run/netns/dhclient-${NSNAME}.pid
 	else
 		if [ ! -z "${IPADDR}" ]; then
-			/bin/ip address add ${IPADDR} dev ${DEVNAME_INSIDE}
+			ip address add ${IPADDR} dev ${DEVNAME_INSIDE}
 		fi
 		if [ ! -z "${GATEWAY}" ]; then
-			/bin/ip route add default via ${GATEWAY%%/*}
+			ip route add default via ${GATEWAY%%/*}
 		fi
 	fi
 	return 0 # additional precation against "set -e" in case of future mods of this function
@@ -30,7 +32,7 @@ autoconfigure_nat() {
 
 	# add default route if gateway undefined
 	if [ -z "${GATEWAY}" -a -n "${IPADDR_OUTSIDE}" ]; then
-		/bin/ip route add default via ${IPADDR_OUTSIDE%%/*}
+		ip route add default via ${IPADDR_OUTSIDE%%/*}
 	fi
 	
 	return 0 # additional precation against "set -e" in case of future mods of this function
